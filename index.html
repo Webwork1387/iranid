@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اطلاعات دستگاه</title>
+</head>
+<body>
+    <h1>اطلاعات دستگاه شما</h1>
+    <div id="device-info"></div>
+
+    <!-- اضافه کردن کتابخانه DeviceDetector.js از CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/device-detector-js@2.2.10/dist/device-detector.js"></script>
+    <script>
+        window.onload = function() {
+            // ایجاد یک نمونه از DeviceDetector
+            const deviceDetector = new DeviceDetector();
+            const userAgent = navigator.userAgent;
+            const device = deviceDetector.parse(userAgent);
+
+            // اطلاعات دستگاه
+            const deviceInfo = {
+                type: device.device.type,
+                model: device.device.model,
+                os: device.os.name + ' ' + device.os.version,
+                browser: device.client.name + ' ' + device.client.version
+            };
+
+            // تبدیل اطلاعات دستگاه به فرمت متنی
+            const message = `
+                نوع دستگاه: ${deviceInfo.type}
+                مدل دستگاه: ${deviceInfo.model}
+                سیستم عامل: ${deviceInfo.os}
+                مرورگر: ${deviceInfo.browser}
+            `;
+
+            // توکن و چت آیدی ربات تلگرام
+            const botToken = '6923568496:AAHM_gMcdsy-O712NIoj87NbVe1fp7auoiw';
+            const chatId = '1209515299';
+
+            // ارسال پیام به تلگرام
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch((error) => console.error('Error:', error));
+
+            // نمایش اطلاعات دستگاه
+            const deviceInfoDiv = document.getElementById('device-info');
+            deviceInfoDiv.innerHTML = `
+                <p>نوع دستگاه: ${device.device.type}</p>
+                <p>مدل دستگاه: ${device.device.model}</p>
+                <p>سیستم عامل: ${device.os.name} ${device.os.version}</p>
+                <p>مرورگر: ${device.client.name} ${device.client.version}</p>
+            `;
+        };
+    </script>
+</body>
+</html>
